@@ -111,16 +111,17 @@ public class LoginHandler extends HttpServlet {
 	}
 */
 	public byte[] executeServerCall(String userId, String password) throws ResourceException {
-		// this.getConnectionLocal();
+		this.getConnectionLocal();
 		// this.getConnection();
 
 		String test = null;
 		try {
-			EPIGateway epiGate = new EPIGateway("tcp://192", 2006);
-			Terminal term = new Terminal(epiGate, "NSA01", null, null);
+			EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
+			Terminal term = new Terminal(epiGate, "CICSTESL", null, null);
+			
 			Screen scr = term.getScreen();
 			Field fld = scr.field(1);
-			fld.setText("EPIP");
+			fld.setText("NSA01");
 			scr.setAID(AID.enter);
 			term.send();
 			for (int i = 1; i <= scr.fieldCount(); i++) {
