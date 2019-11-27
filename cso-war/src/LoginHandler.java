@@ -100,15 +100,24 @@ public class LoginHandler extends HttpServlet {
 	public byte[] execute(String userId, String password) throws ResourceException {
 		return this.executeServerCall(userId, password);
 	}
+	
+	/*
+	public byte[] executeTransaction(String userId, String password) throws ResourceException {
+		return this.executeServerCall(userId, password);
+	}
 
+	public byte[] execute(String userId, String password) throws ResourceException {
+		return this.executeServerCall(userId, password);
+	}
+*/
 	public byte[] executeServerCall(String userId, String password) throws ResourceException {
 		// this.getConnectionLocal();
 		// this.getConnection();
 
 		String test = null;
 		try {
-			EPIGateway epiGate = new EPIGateway("tcp://gunner", 2006);
-			Terminal term = new Terminal(epiGate, "SCSCPAA6", null, null);
+			EPIGateway epiGate = new EPIGateway("tcp://192", 2006);
+			Terminal term = new Terminal(epiGate, "NSA01", null, null);
 			Screen scr = term.getScreen();
 			Field fld = scr.field(1);
 			fld.setText("EPIP");
