@@ -25,12 +25,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.ibm.connector2.cics.ECIInteractionSpec;
 import com.ibm.connector2.cics.ECIManagedConnectionFactory;
+import com.ibm.ctg.client.EPIRequest;
+import com.ibm.ctg.client.JavaGateway;
 import com.ibm.ctg.epi.AID;
 import com.ibm.ctg.epi.EPIException;
 import com.ibm.ctg.epi.EPIGateway;
 import com.ibm.ctg.epi.Field;
 import com.ibm.ctg.epi.Screen;
 import com.ibm.ctg.epi.Terminal;
+import com.ibm.ctg.epi.Terminal.EPISignOnType;
 
 import javax.naming.InitialContext;
 import javax.resource.ResourceException;
@@ -100,25 +103,57 @@ public class LoginHandler extends HttpServlet {
 	public byte[] execute(String userId, String password) throws ResourceException {
 		return this.executeServerCall(userId, password);
 	}
-	
-	/*
-	public byte[] executeTransaction(String userId, String password) throws ResourceException {
-		return this.executeServerCall(userId, password);
-	}
 
-	public byte[] execute(String userId, String password) throws ResourceException {
-		return this.executeServerCall(userId, password);
-	}
-*/
+	/*
+	 * public byte[] executeTransaction(String userId, String password) throws
+	 * ResourceException { return this.executeServerCall(userId, password); }
+	 * 
+	 * public byte[] execute(String userId, String password) throws
+	 * ResourceException { return this.executeServerCall(userId, password); }
+	 */
 	public byte[] executeServerCall(String userId, String password) throws ResourceException {
-		this.getConnectionLocal();
+		// this.getConnectionLocal();
 		// this.getConnection();
 
 		String test = null;
 		try {
-			EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
-			Terminal term = new Terminal(epiGate, "CICSTESL", null, null);
 			
+			  JavaGateway javaGateway = new JavaGateway("tcp://20.10.93.101", 2006);
+			  
+			  EPIRequest myEPIRequest = EPIRequest.addTerminal("CICSTESL",null, null);
+			  
+			 // javaGateway.
+			  
+			  byte[] myByteArrayData = new byte[3270];
+			  myEPIRequest.startTran("NSAX", myByteArrayData, 10);
+			  
+			  javaGateway.flow(myEPIRequest);
+			  
+			  System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() + " " + myEPIRequest.getCicsRcString() + " "+ myEPIRequest.getClientType());
+			  
+			/* 
+
+			EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
+			
+			Terminal term = new Terminal(epiGate, "CICSTESL", "3278E", "I01v3cvv", Terminal.EPI_SIGNON_CAPABLE,
+					"«‘—› «»Ê “Ìœ", "120875", 0, "Cp420");
+			
+			EPIRequest epiRequest = new EPIRequest();
+
+			// Terminal term = new Terminal(epiGate, "CICSTESL", "I01v3cvv",
+			// "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000,
+			// "Cp420");
+			// Terminal term = new Terminal(epiGate, "CICSTESL", null,null);
+
+			// term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
+			// term.setExtendedTerminal(true);
+			// term.setUserid("test");
+			// term.setPassword("test");
+			 * 
+			 * 
+			
+			term.connect();
+
 			Screen scr = term.getScreen();
 			Field fld = scr.field(1);
 			fld.setText("NSA01");
@@ -127,20 +162,20 @@ public class LoginHandler extends HttpServlet {
 			for (int i = 1; i <= scr.fieldCount(); i++) {
 				fld = scr.field(i); // get field by index
 				if (fld.textLength() > 0) {
-					
+
 					test = fld.getText();
 					System.out.println("Field " + i + ":" + test);
-					
+
 				}
-					
+
 			}
 			term.disconnect();
 			epiGate.close();
-			
-			
-			
+			 
+
 		} catch (EPIException epiEx) {
 			epiEx.printStackTrace();
+			*/
 		} catch (java.io.IOException ioEx) {
 			ioEx.printStackTrace();
 		}
@@ -157,17 +192,18 @@ public class LoginHandler extends HttpServlet {
 		 * 
 		 * StringBuffer buffer = new StringBuffer();
 		 * 
-		 * // First get the file InputStream using ServletContext.getResourceAsStream()
-		 * // method. InputStream is = context.getResourceAsStream(filename); if (is !=
-		 * null) { InputStreamReader isr = new InputStreamReader(is); BufferedReader
+		 * // First get the file InputStream using
+		 * ServletContext.getResourceAsStream() // method. InputStream is =
+		 * context.getResourceAsStream(filename); if (is != null) {
+		 * InputStreamReader isr = new InputStreamReader(is); BufferedReader
 		 * reader = new BufferedReader(isr);
 		 * 
 		 * String text;
 		 * 
-		 * // We read the file line by line and later will be displayed on the //
-		 * browser page. try { while ((text = reader.readLine()) != null) {
-		 * buffer.append(text); } } catch (IOException e) { // TODO Auto-generated catch
-		 * block e.printStackTrace(); } }
+		 * // We read the file line by line and later will be displayed on the
+		 * // browser page. try { while ((text = reader.readLine()) != null) {
+		 * buffer.append(text); } } catch (IOException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } }
 		 * 
 		 * for (int i = 0; i < 32724; i++) { buffer.append("0");
 		 * 
@@ -191,8 +227,9 @@ public class LoginHandler extends HttpServlet {
 		 * 
 		 * this.eSpec = new ECIInteractionSpec();
 		 * 
-		 * this.eSpec.setCommareaLength(32763); // this.eSpec.setCommareaLength(54); //
-		 * this.eSpec.setReplyLength(47); this.eSpec.setFunctionName("LGONCHK"); //
+		 * this.eSpec.setCommareaLength(32763); //
+		 * this.eSpec.setCommareaLength(54); // this.eSpec.setReplyLength(47);
+		 * this.eSpec.setFunctionName("LGONCHK"); //
 		 * this.eSpec.setTPNName("NSAX"); this.eSpec.setTranName("NSAX");
 		 * 
 		 * this.eSpec.setInteractionVerb(ECIInteractionSpec.SYNC_SEND_RECEIVE);
@@ -201,17 +238,16 @@ public class LoginHandler extends HttpServlet {
 		 * JavaStringRecordOut javaStringRecordOut = new JavaStringRecordOut();
 		 * 
 		 * try { this.eciInt.execute((InteractionSpec) this.eSpec, (Record)
-		 * javaStringRecord, (Record) javaStringRecordOut); } catch (ResourceException
-		 * ex) { this.dropConnection(); throw ex; }
+		 * javaStringRecord, (Record) javaStringRecordOut); } catch
+		 * (ResourceException ex) { this.dropConnection(); throw ex; }
 		 * 
 		 * this.dropConnection();
 		 * 
 		 * // ServletContext context = getServletContext();
 		 * 
-		 * /* try { return
-		 * IOUtils.toByteArray(context.getResourceAsStream("/WEB-INF/lib/original.jp2"))
-		 * ; } catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
+		 * /* try { return IOUtils.toByteArray(context.getResourceAsStream(
+		 * "/WEB-INF/lib/original.jp2")) ; } catch (IOException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
 		 */
 
 		/*
@@ -238,7 +274,7 @@ public class LoginHandler extends HttpServlet {
 
 	private void getConnectionLocal() throws ResourceException {
 		ECIManagedConnectionFactory mcf = new ECIManagedConnectionFactory();
-		mcf.setConnectionURL("tcp://20.10.93.101");
+		mcf.setConnectionURL("tcp:// 20.10.93.101");
 		mcf.setPortNumber("2006");
 		mcf.setServerName("CICSTESL");
 		// Create a connection factory connection object
@@ -248,7 +284,8 @@ public class LoginHandler extends HttpServlet {
 			this.eciConn = cxnf.getConnection();
 		} catch (Exception ex3) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012"))
+			// +
 			// ex3.getMessage());
 			throw new ResourceException(ex3.getMessage());
 		}
@@ -256,7 +293,8 @@ public class LoginHandler extends HttpServlet {
 			this.eciInt = this.eciConn.createInteraction();
 		} catch (Exception ex4) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013"))
+			// +
 			// ex4.getMessage())
 			throw new ResourceException(ex4.getMessage());
 		}
@@ -269,7 +307,8 @@ public class LoginHandler extends HttpServlet {
 			// lookup = new InitialContext().lookup("java:comp/env/ECI");
 		} catch (Exception ex) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT014")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT014"))
+			// +
 			// ex.getMessage());
 			throw new ResourceException(ex.getMessage());
 
@@ -283,7 +322,8 @@ public class LoginHandler extends HttpServlet {
 			connectionFactory = (ConnectionFactory) lookup;
 		} catch (ClassCastException ex2) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT011")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT011"))
+			// +
 			// ex2.getMessage());
 			throw new ResourceException(ex2.getMessage());
 		}
@@ -291,7 +331,8 @@ public class LoginHandler extends HttpServlet {
 			this.eciConn = connectionFactory.getConnection();
 		} catch (Exception ex3) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012"))
+			// +
 			// ex3.getMessage());
 			throw new ResourceException(ex3.getMessage());
 		}
@@ -299,7 +340,8 @@ public class LoginHandler extends HttpServlet {
 			this.eciInt = this.eciConn.createInteraction();
 		} catch (Exception ex4) {
 			// throw new
-			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013")) +
+			// ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013"))
+			// +
 			// ex4.getMessage())
 			throw new ResourceException(ex4.getMessage());
 		}
@@ -328,8 +370,8 @@ public class LoginHandler extends HttpServlet {
 	 * 
 	 * for (FileItem item : multiparts) { String fieldItemName =
 	 * item.getFieldName(); if (fieldItemName.equals("userid")) { userId =
-	 * item.getString(); } else if (fieldItemName.equals("password")) { password =
-	 * item.getString(); }
+	 * item.getString(); } else if (fieldItemName.equals("password")) { password
+	 * = item.getString(); }
 	 * 
 	 * }
 	 * 
@@ -379,16 +421,17 @@ public class LoginHandler extends HttpServlet {
 	 * object ConnectionFactory cxnf = (ConnectionFactory)
 	 * mcf.createConnectionFactory();
 	 * 
-	 * try { this.eciConn = cxnf.getConnection(); } catch (Exception ex3) { // throw
-	 * new // ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012")) +
-	 * // ex3.getMessage()); throw new ResourceException(ex3.getMessage()); } try {
-	 * this.eciInt = this.eciConn.createInteraction(); } catch (Exception ex4) { //
+	 * try { this.eciConn = cxnf.getConnection(); } catch (Exception ex3) { //
 	 * throw new //
+	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012")) + //
+	 * ex3.getMessage()); throw new ResourceException(ex3.getMessage()); } try {
+	 * this.eciInt = this.eciConn.createInteraction(); } catch (Exception ex4) {
+	 * // throw new //
 	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013")) + //
 	 * ex4.getMessage()) throw new ResourceException(ex4.getMessage()); } }
 	 * 
-	 * private void getConnection() throws ResourceException { Object lookup; try {
-	 * lookup = new InitialContext().lookup("eis/CICSTG"); // lookup = new
+	 * private void getConnection() throws ResourceException { Object lookup;
+	 * try { lookup = new InitialContext().lookup("eis/CICSTG"); // lookup = new
 	 * InitialContext().lookup("java:comp/env/ECI"); } catch (Exception ex) { //
 	 * throw new //
 	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT014")) + //
@@ -396,17 +439,17 @@ public class LoginHandler extends HttpServlet {
 	 * 
 	 * } if (lookup == null) { // throw new
 	 * ResourceException(IvtMessages.getString("ECIIVT010")); throw new
-	 * ResourceException("lookup error"); } ConnectionFactory connectionFactory; try
-	 * { connectionFactory = (ConnectionFactory) lookup; } catch (ClassCastException
-	 * ex2) { // throw new //
+	 * ResourceException("lookup error"); } ConnectionFactory connectionFactory;
+	 * try { connectionFactory = (ConnectionFactory) lookup; } catch
+	 * (ClassCastException ex2) { // throw new //
 	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT011")) + //
 	 * ex2.getMessage()); throw new ResourceException(ex2.getMessage()); } try {
-	 * this.eciConn = connectionFactory.getConnection(); } catch (Exception ex3) {
-	 * // throw new //
+	 * this.eciConn = connectionFactory.getConnection(); } catch (Exception ex3)
+	 * { // throw new //
 	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT012")) + //
 	 * ex3.getMessage()); throw new ResourceException(ex3.getMessage()); } try {
-	 * this.eciInt = this.eciConn.createInteraction(); } catch (Exception ex4) { //
-	 * throw new //
+	 * this.eciInt = this.eciConn.createInteraction(); } catch (Exception ex4) {
+	 * // throw new //
 	 * ResourceException(String.valueOf(IvtMessages.getString("ECIIVT013")) + //
 	 * ex4.getMessage()) throw new ResourceException(ex4.getMessage()); } }
 	 * 
