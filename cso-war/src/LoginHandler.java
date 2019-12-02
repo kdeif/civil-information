@@ -1,10 +1,6 @@
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.naming.InitialContext;
@@ -12,9 +8,6 @@ import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.Interaction;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.Record;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,23 +22,6 @@ import com.ibm.connector2.cics.ECIManagedConnectionFactory;
 import com.ibm.ctg.client.EPIRequest;
 import com.ibm.ctg.client.ESIRequest;
 import com.ibm.ctg.client.JavaGateway;
-import com.ibm.ctg.epi.AID;
-import com.ibm.ctg.epi.EPIException;
-import com.ibm.ctg.epi.EPIGateway;
-import com.ibm.ctg.epi.EPITerminal;
-import com.ibm.ctg.epi.Field;
-import com.ibm.ctg.epi.Screen;
-import com.ibm.ctg.epi.Terminal;
-import com.ibm.ctg.epi.Terminal.EPISignOnType;
-import com.ibm.ctg.epi.TerminalException;
-
-import javax.naming.InitialContext;
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.Interaction;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.Record;
 
 public class LoginHandler extends HttpServlet {
 
@@ -120,215 +96,271 @@ public class LoginHandler extends HttpServlet {
 		// this.getConnection();
 
 		String test = null;
-		
-		JavaGateway javaGateway =null;
+
+		JavaGateway javaGateway = null;
+		try {
+			javaGateway = new JavaGateway("tcp://20.10.93.101", 2006);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			 e.printStackTrace();
+		}
 			try {
-				 javaGateway = new JavaGateway("tcp://20.10.93.101", 2006);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-			// EPIRequest myEPIRequest = EPIRequest.addTerminal("CICSTESL",null,
-			// null);
+				// JavaGateway javaGateway = new
+				// JavaGateway("tcp://20.10.93.101", 2006);
 
-			// javaGateway.
-			/*
-			 * byte[] myByteArrayData = new byte[3270];
-			 * myEPIRequest.startTran("NSAX", myByteArrayData, 10);
-			 * 
-			 * javaGateway.flow(myEPIRequest);
-			 * 
-			 * System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() + " " +
-			 * myEPIRequest.getCicsRcString() + " "+
-			 * myEPIRequest.getClientType());
-			 * 
-			 * 
-			 */
-			//EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
-			
-			//Terminal term = new Terminal(epiGate,"CICSTESL", "IO1V3CVV","3278", Terminal.EPI_SIGNON_INCAPABLE, "«‘—› «»Ê “Ìœ","120875",0, "Cp420" );
-			
-			//term.setExtendedTerminal(true);
-			//term.connect();
-			
-			//epiGate.serverCount()
-			
-			//epiGate.open();
-		
+				EPIRequest myEPIRequest = EPIRequest.addTerminal("CICSTESL", null, null);
 
-			
-				//Terminal term = new Terminal();
-				//term.setGateway(epiGate);
-				
+				// javaGateway.
+
+				byte[] myByteArrayData = new byte[3270];
+				myEPIRequest.startTran("NSAX", myByteArrayData, 10);
+
+				javaGateway.flow(myEPIRequest);
+
+				System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() + " " + myEPIRequest.getCicsRcString() + " "
+						+ myEPIRequest.getClientType());
+
+				/*
+				 * 
+				 * EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101",
+				 * 2006);
+				 * 
+				 * Terminal term = new Terminal(epiGate, "CICSTESL", "3278E",
+				 * "I01v3cvv", Terminal.EPI_SIGNON_CAPABLE, "«‘—› «»Ê “Ìœ",
+				 * "120875", 0, "Cp420");
+				 * 
+				 * EPIRequest epiRequest = new EPIRequest();
+				 * 
+				 * // Terminal term = new Terminal(epiGate, "CICSTESL",
+				 * "I01v3cvv", //
+				 * "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000, //
+				 * "Cp420"); // Terminal term = new Terminal(epiGate,
+				 * "CICSTESL", null,null);
+				 * 
+				 * // term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
+				 * // term.setExtendedTerminal(true); // term.setUserid("test");
+				 * // term.setPassword("test");
+				 * 
+				 * 
+				 * 
+				 * term.connect();
+				 * 
+				 * Screen scr = term.getScreen(); Field fld = scr.field(1);
+				 * fld.setText("NSA01"); scr.setAID(AID.enter); term.send(); for
+				 * (int i = 1; i <= scr.fieldCount(); i++) { fld = scr.field(i);
+				 * // get field by index if (fld.textLength() > 0) {
+				 * 
+				 * test = fld.getText(); System.out.println("Field " + i + ":" +
+				 * test);
+				 * 
+				 * }
+				 * 
+				 * // EPIRequest myEPIRequest =
+				 * EPIRequest.addTerminal("CICSTESL",null, // null);
+				 * 
+				 * // javaGateway. /* byte[] myByteArrayData = new byte[3270];
+				 * myEPIRequest.startTran("NSAX", myByteArrayData, 10);
+				 * 
+				 * javaGateway.flow(myEPIRequest);
+				 * 
+				 * System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() +
+				 * " " + myEPIRequest.getCicsRcString() + " "+
+				 * myEPIRequest.getClientType());
+				 * 
+				 * 
+				 */
+				// EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101",
+				// 2006);
+
+				// Terminal term = new Terminal(epiGate,"CICSTESL",
+				// "IO1V3CVV","3278", Terminal.EPI_SIGNON_INCAPABLE, "«‘—› «»Ê
+				// “Ìœ","120875",0, "Cp420" );
+
+				// term.setExtendedTerminal(true);
+				// term.connect();
+
+				// epiGate.serverCount()
+
+				// epiGate.open();
+
+				// Terminal term = new Terminal();
+				// term.setGateway(epiGate);
+
 				ESIRequest ESIReq = new ESIRequest();
-			
+
 				String userIdCorrectCP = null;
-				
-					userIdCorrectCP = new String ("NHAZEM");
-				
+
+				userIdCorrectCP = new String("NHAZEM");
+
 				ESIReq.setUserid(userIdCorrectCP);
-				
+
 				ESIReq.setCurrentPassword("NOURTYUI");
 				ESIReq.setServer("CICSTESL");
-				
-				
-				/*ESIReq.*/
-				
-				
+
+				/* ESIReq. */
+
 				try {
 					javaGateway.flow(ESIReq);
-				} catch (IOException e) {
+				} catch (IOException ioe) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ioe.printStackTrace();
 				}
 				System.out.println(ESIReq.getGatewayRcString());
 				System.out.println(ESIReq.getCicsRcString());
-				
-				
-				//System.out.println(epiGate.serverCount());
-				
-				/*term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
-				term.setExtendedTerminal(true);
-				term.setEncoding("Cp420");
-				term.setUserid("«‘—› «»Ê “Ìœ");
-				term.setPassword("120875");
-				term.connect();
 
-				Screen scr = term.getScreen();
-				Field fld = scr.field(1);
-				fld.setText("NSAX");
-				scr.setAID(AID.enter);
-				
-				term.disconnect();
-				epiGate.close();
-*/
-			
+				// System.out.println(epiGate.serverCount());
 
-			// term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
-			// term.setExtendedTerminal(true);
-			// term.setUserid("test");
-			// term.setPassword("test");
+				/*
+				 * term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
+				 * term.setExtendedTerminal(true); term.setEncoding("Cp420");
+				 * term.setUserid("«‘—› «»Ê “Ìœ"); term.setPassword("120875");
+				 * term.connect();
+				 * 
+				 * Screen scr = term.getScreen(); Field fld = scr.field(1);
+				 * fld.setText("NSAX"); scr.setAID(AID.enter);
+				 * 
+				 * term.disconnect(); epiGate.close();
+				 */
 
+				// term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
+				// term.setExtendedTerminal(true);
+				// term.setUserid("test");
+				// term.setPassword("test");
+
+				/*
+				 * 
+				 * EPITerminal term = new EPITerminal();
+				 * 
+				 * 
+				 * 
+				 * term.setGatewayURL("20.10.93.101"); term.setATI(true);
+				 * term.setUserid("«‘—› «»Ê “Ìœ"); term.setPassword("120875");
+				 * term.setTransaction("NSAX");
+				 * 
+				 * term.startTran(); term.connect();
+				 * 
+				 * System.out.println(term.getState());
+				 * 
+				 * Screen scr = term.getScreen(); Field fld = scr.field(1);
+				 * fld.setText("NSA01"); scr.setAID(AID.enter); term.send(); for
+				 * (int i = 1; i <= scr.fieldCount(); i++) { fld = scr.field(i);
+				 * // get field by index if (fld.textLength() > 0) {
+				 * 
+				 * test = fld.getText(); System.out.println("Field " + i + ":" +
+				 * test);
+				 * 
+				 * }
+				 * 
+				 * } term.disconnect();
+				 * 
+				 */
+
+				// EPIRequest epiRequest = new EPIRequest();
+				/*
+				 * Terminal term = new Terminal(epiGate, "CICSTESL", "I01v3cvv",
+				 * "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000,
+				 * "Cp420");
+				 * 
+				 */
+
+				// epiGate.close();
+
+				/*
+				 * } catch (EPIException epiEx) { epiEx.printStackTrace();
+				 */
+
+				// =======
+				// term.disconnect();
+				// epiGate.close();
+
+				/*
+				 * } catch (EPIException epiEx) { epiEx.printStackTrace(); //
+				 */
+			} catch (java.io.IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+			// >>>>>>> branch 'master' of
+			// https://github.com/kdeif/civil-information.git
+
+			return test.getBytes();
 			/*
+			 * JavaStringRecord javaStringRecord = new JavaStringRecord();
 			 * 
-			 * EPITerminal term = new EPITerminal();
+			 * javaStringRecord.setEncoding("IBM420");
 			 * 
+			 * String filename = "/WEB-INF/commarea.in";
 			 * 
+			 * ServletContext context = getServletContext();
 			 * 
-			 * term.setGatewayURL("20.10.93.101"); term.setATI(true);
-			 * term.setUserid("«‘—› «»Ê “Ìœ"); term.setPassword("120875");
-			 * term.setTransaction("NSAX");
+			 * StringBuffer buffer = new StringBuffer();
 			 * 
-			 * term.startTran(); term.connect();
+			 * // First get the file InputStream using
+			 * ServletContext.getResourceAsStream() // method. InputStream is =
+			 * context.getResourceAsStream(filename); if (is != null) {
+			 * InputStreamReader isr = new InputStreamReader(is); BufferedReader
+			 * reader = new BufferedReader(isr);
 			 * 
-			 * System.out.println(term.getState());
+			 * String text;
 			 * 
-			 * Screen scr = term.getScreen(); Field fld = scr.field(1);
-			 * fld.setText("NSA01"); scr.setAID(AID.enter); term.send(); for
-			 * (int i = 1; i <= scr.fieldCount(); i++) { fld = scr.field(i); //
-			 * get field by index if (fld.textLength() > 0) {
+			 * // We read the file line by line and later will be displayed on
+			 * the // browser page. try { while ((text = reader.readLine()) !=
+			 * null) { buffer.append(text); } } catch (IOException e) { // TODO
+			 * Auto-generated catch block e.printStackTrace(); } }
 			 * 
-			 * test = fld.getText(); System.out.println("Field " + i + ":" +
-			 * test);
+			 * for (int i = 0; i < 32724; i++) { buffer.append("0");
 			 * 
 			 * }
 			 * 
-			 * } term.disconnect();
+			 * // buffer.append("0300020301019921398892208")
+			 * 
+			 * // buffer.append(userId+password);
+			 * 
+			 * // buffer.append(userId + password);
+			 * 
+			 * /* for (int i = 0; i < 20580; i++) { buffer.append("0");
+			 * 
+			 * }
+			 */
+			/*
+			 * System.out.println(" LOGIN  COMMAREA = " + buffer.toString());
+			 * javaStringRecord.setText(buffer.toString());
+			 * 
+			 * // javaStringRecord.setText(photo);
+			 * 
+			 * this.eSpec = new ECIInteractionSpec();
+			 * 
+			 * this.eSpec.setCommareaLength(32763); //
+			 * this.eSpec.setCommareaLength(54); //
+			 * this.eSpec.setReplyLength(47);
+			 * this.eSpec.setFunctionName("LGONCHK"); //
+			 * this.eSpec.setTPNName("NSAX"); this.eSpec.setTranName("NSAX");
+			 * 
+			 * this.eSpec.setInteractionVerb(ECIInteractionSpec.
+			 * SYNC_SEND_RECEIVE); this.eSpec.setExecuteTimeout(60000);
+			 * 
+			 * JavaStringRecordOut javaStringRecordOut = new
+			 * JavaStringRecordOut();
+			 * 
+			 * try { this.eciInt.execute((InteractionSpec) this.eSpec, (Record)
+			 * javaStringRecord, (Record) javaStringRecordOut); } catch
+			 * (ResourceException ex) { this.dropConnection(); throw ex; }
+			 * 
+			 * this.dropConnection();
+			 * 
+			 * // ServletContext context = getServletContext();
+			 * 
+			 * /* try { return IOUtils.toByteArray(context.getResourceAsStream(
+			 * "/WEB-INF/lib/original.jp2")) ; } catch (IOException e) { // TODO
+			 * Auto-generated catch block e.printStackTrace(); }
+			 */
+
+			/*
+			 * return javaStringRecordOut.getBinary();
 			 * 
 			 */
-
-			// EPIRequest epiRequest = new EPIRequest();
-			/*
-			 * Terminal term = new Terminal(epiGate, "CICSTESL", "I01v3cvv",
-			 * "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000,
-			 * "Cp420");
-			 * 
-			 */
-
-			// epiGate.close();
-
-			/*
-			 * } catch (EPIException epiEx) { epiEx.printStackTrace();
-			 */
-		
-
-		return test.getBytes();
-		/*
-		 * JavaStringRecord javaStringRecord = new JavaStringRecord();
-		 * 
-		 * javaStringRecord.setEncoding("IBM420");
-		 * 
-		 * String filename = "/WEB-INF/commarea.in";
-		 * 
-		 * ServletContext context = getServletContext();
-		 * 
-		 * StringBuffer buffer = new StringBuffer();
-		 * 
-		 * // First get the file InputStream using
-		 * ServletContext.getResourceAsStream() // method. InputStream is =
-		 * context.getResourceAsStream(filename); if (is != null) {
-		 * InputStreamReader isr = new InputStreamReader(is); BufferedReader
-		 * reader = new BufferedReader(isr);
-		 * 
-		 * String text;
-		 * 
-		 * // We read the file line by line and later will be displayed on the
-		 * // browser page. try { while ((text = reader.readLine()) != null) {
-		 * buffer.append(text); } } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } }
-		 * 
-		 * for (int i = 0; i < 32724; i++) { buffer.append("0");
-		 * 
-		 * }
-		 * 
-		 * // buffer.append("0300020301019921398892208")
-		 * 
-		 * // buffer.append(userId+password);
-		 * 
-		 * // buffer.append(userId + password);
-		 * 
-		 * /* for (int i = 0; i < 20580; i++) { buffer.append("0");
-		 * 
-		 * }
-		 */
-		/*
-		 * System.out.println(" LOGIN  COMMAREA = " + buffer.toString());
-		 * javaStringRecord.setText(buffer.toString());
-		 * 
-		 * // javaStringRecord.setText(photo);
-		 * 
-		 * this.eSpec = new ECIInteractionSpec();
-		 * 
-		 * this.eSpec.setCommareaLength(32763); //
-		 * this.eSpec.setCommareaLength(54); // this.eSpec.setReplyLength(47);
-		 * this.eSpec.setFunctionName("LGONCHK"); //
-		 * this.eSpec.setTPNName("NSAX"); this.eSpec.setTranName("NSAX");
-		 * 
-		 * this.eSpec.setInteractionVerb(ECIInteractionSpec.SYNC_SEND_RECEIVE);
-		 * this.eSpec.setExecuteTimeout(60000);
-		 * 
-		 * JavaStringRecordOut javaStringRecordOut = new JavaStringRecordOut();
-		 * 
-		 * try { this.eciInt.execute((InteractionSpec) this.eSpec, (Record)
-		 * javaStringRecord, (Record) javaStringRecordOut); } catch
-		 * (ResourceException ex) { this.dropConnection(); throw ex; }
-		 * 
-		 * this.dropConnection();
-		 * 
-		 * // ServletContext context = getServletContext();
-		 * 
-		 * /* try { return IOUtils.toByteArray(context.getResourceAsStream(
-		 * "/WEB-INF/lib/original.jp2")) ; } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 */
-
-		/*
-		 * return javaStringRecordOut.getBinary();
-		 * 
-		 */
-	}
+		}
 
 	private static byte[] readFileToByteArrayMock(File file) {
 		FileInputStream fis = null;
