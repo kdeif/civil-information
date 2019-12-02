@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.naming.InitialContext;
@@ -26,14 +27,17 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.ibm.connector2.cics.ECIInteractionSpec;
 import com.ibm.connector2.cics.ECIManagedConnectionFactory;
 import com.ibm.ctg.client.EPIRequest;
+import com.ibm.ctg.client.ESIRequest;
 import com.ibm.ctg.client.JavaGateway;
 import com.ibm.ctg.epi.AID;
 import com.ibm.ctg.epi.EPIException;
 import com.ibm.ctg.epi.EPIGateway;
+import com.ibm.ctg.epi.EPITerminal;
 import com.ibm.ctg.epi.Field;
 import com.ibm.ctg.epi.Screen;
 import com.ibm.ctg.epi.Terminal;
 import com.ibm.ctg.epi.Terminal.EPISignOnType;
+import com.ibm.ctg.epi.TerminalException;
 
 import javax.naming.InitialContext;
 import javax.resource.ResourceException;
@@ -116,69 +120,140 @@ public class LoginHandler extends HttpServlet {
 		// this.getConnection();
 
 		String test = null;
-		try {
-			
-			  JavaGateway javaGateway = new JavaGateway("tcp://20.10.93.101", 2006);
-			  
-			  EPIRequest myEPIRequest = EPIRequest.addTerminal("CICSTESL",null, null);
-			  
-			 // javaGateway.
-			  
-			  byte[] myByteArrayData = new byte[3270];
-			  myEPIRequest.startTran("NSAX", myByteArrayData, 10);
-			  
-			  javaGateway.flow(myEPIRequest);
-			  
-			  System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() + " " + myEPIRequest.getCicsRcString() + " "+ myEPIRequest.getClientType());
-			  
-			/* 
+		
+		JavaGateway javaGateway =null;
+			try {
+				 javaGateway = new JavaGateway("tcp://20.10.93.101", 2006);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
-			
-			Terminal term = new Terminal(epiGate, "CICSTESL", "3278E", "I01v3cvv", Terminal.EPI_SIGNON_CAPABLE,
-					"«‘—› «»Ê “Ìœ", "120875", 0, "Cp420");
-			
-			EPIRequest epiRequest = new EPIRequest();
+			// EPIRequest myEPIRequest = EPIRequest.addTerminal("CICSTESL",null,
+			// null);
 
-			// Terminal term = new Terminal(epiGate, "CICSTESL", "I01v3cvv",
-			// "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000,
-			// "Cp420");
-			// Terminal term = new Terminal(epiGate, "CICSTESL", null,null);
+			// javaGateway.
+			/*
+			 * byte[] myByteArrayData = new byte[3270];
+			 * myEPIRequest.startTran("NSAX", myByteArrayData, 10);
+			 * 
+			 * javaGateway.flow(myEPIRequest);
+			 * 
+			 * System.out.println("OUTPUT = " + myEPIRequest.getCicsRc() + " " +
+			 * myEPIRequest.getCicsRcString() + " "+
+			 * myEPIRequest.getClientType());
+			 * 
+			 * 
+			 */
+			//EPIGateway epiGate = new EPIGateway("tcp://20.10.93.101", 2006);
+			
+			//Terminal term = new Terminal(epiGate,"CICSTESL", "IO1V3CVV","3278", Terminal.EPI_SIGNON_INCAPABLE, "«‘—› «»Ê “Ìœ","120875",0, "Cp420" );
+			
+			//term.setExtendedTerminal(true);
+			//term.connect();
+			
+			//epiGate.serverCount()
+			
+			//epiGate.open();
+		
+
+			
+				//Terminal term = new Terminal();
+				//term.setGateway(epiGate);
+				
+				ESIRequest ESIReq = new ESIRequest();
+			
+				String userIdCorrectCP = null;
+				
+					userIdCorrectCP = new String ("NHAZEM");
+				
+				
+				ESIReq.setUserid(userIdCorrectCP);
+				
+				ESIReq.setCurrentPassword("NOURTYUI");
+				ESIReq.setServer("CICSTESL");
+				
+				
+				//ESIReq.
+				
+				
+				try {
+					javaGateway.flow(ESIReq);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println(ESIReq.getGatewayRcString());
+				System.out.println(ESIReq.getCicsRcString());
+				
+				
+				//System.out.println(epiGate.serverCount());
+				
+				/*term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
+				term.setExtendedTerminal(true);
+				term.setEncoding("Cp420");
+				term.setUserid("«‘—› «»Ê “Ìœ");
+				term.setPassword("120875");
+				term.connect();
+
+				Screen scr = term.getScreen();
+				Field fld = scr.field(1);
+				fld.setText("NSAX");
+				scr.setAID(AID.enter);
+				
+				term.disconnect();
+				epiGate.close();
+*/
+			
 
 			// term.setSignonCapability(Terminal.EPI_SIGNON_INCAPABLE);
 			// term.setExtendedTerminal(true);
 			// term.setUserid("test");
 			// term.setPassword("test");
+
+			/*
+			 * 
+			 * EPITerminal term = new EPITerminal();
 			 * 
 			 * 
-			
-			term.connect();
+			 * 
+			 * term.setGatewayURL("20.10.93.101"); term.setATI(true);
+			 * term.setUserid("«‘—› «»Ê “Ìœ"); term.setPassword("120875");
+			 * term.setTransaction("NSAX");
+			 * 
+			 * term.startTran(); term.connect();
+			 * 
+			 * System.out.println(term.getState());
+			 * 
+			 * Screen scr = term.getScreen(); Field fld = scr.field(1);
+			 * fld.setText("NSA01"); scr.setAID(AID.enter); term.send(); for
+			 * (int i = 1; i <= scr.fieldCount(); i++) { fld = scr.field(i); //
+			 * get field by index if (fld.textLength() > 0) {
+			 * 
+			 * test = fld.getText(); System.out.println("Field " + i + ":" +
+			 * test);
+			 * 
+			 * }
+			 * 
+			 * } term.disconnect();
+			 * 
+			 */
 
-			Screen scr = term.getScreen();
-			Field fld = scr.field(1);
-			fld.setText("NSA01");
-			scr.setAID(AID.enter);
-			term.send();
-			for (int i = 1; i <= scr.fieldCount(); i++) {
-				fld = scr.field(i); // get field by index
-				if (fld.textLength() > 0) {
+			// EPIRequest epiRequest = new EPIRequest();
+			/*
+			 * Terminal term = new Terminal(epiGate, "CICSTESL", "I01v3cvv",
+			 * "3278",Terminal.EPI_SIGNON_INCAPABLE,"test","test", 6000,
+			 * "Cp420");
+			 * 
+			 */
 
-					test = fld.getText();
-					System.out.println("Field " + i + ":" + test);
+			// epiGate.close();
 
-				}
-
-			}
-			term.disconnect();
-			epiGate.close();
-			 
-
-		} catch (EPIException epiEx) {
-			epiEx.printStackTrace();
-			*/
-		} catch (java.io.IOException ioEx) {
-			ioEx.printStackTrace();
-		}
+			/*
+			 * } catch (EPIException epiEx) { epiEx.printStackTrace();
+			 */
+		
 
 		return test.getBytes();
 		/*
