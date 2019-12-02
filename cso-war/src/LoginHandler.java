@@ -168,14 +168,13 @@ public class LoginHandler extends HttpServlet {
 				
 					userIdCorrectCP = new String ("NHAZEM");
 				
-				
 				ESIReq.setUserid(userIdCorrectCP);
 				
 				ESIReq.setCurrentPassword("NOURTYUI");
 				ESIReq.setServer("CICSTESL");
 				
 				
-				//ESIReq.
+				/*ESIReq.*/
 				
 				
 				try {
